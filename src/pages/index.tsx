@@ -1,6 +1,6 @@
 
-import Index from "../pages/Index";
+import HomePage from "../pages/HomePage";
 
-export default function HomePage() {
-  return <Index />;
+export default function Home() {
+  return <HomePage />;
 }
