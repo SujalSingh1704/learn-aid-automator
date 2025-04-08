@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { BookOpen } from 'lucide-react';
+import ApiKeyInput from './ApiKeyInput';
 
 const Header = () => {
   return (
@@ -10,10 +11,11 @@ const Header = () => {
           <BookOpen className="h-8 w-8 text-white" />
           <h1 className="text-2xl font-bold text-white">Learn Aid Automator</h1>
         </div>
-        <div>
+        <div className="flex items-center gap-3">
           <span className="text-sm bg-white/20 px-3 py-1 rounded-full text-white">
             AI-Powered Quiz Generator
           </span>
+          <ApiKeyInput />
         </div>
       </div>
     </header>

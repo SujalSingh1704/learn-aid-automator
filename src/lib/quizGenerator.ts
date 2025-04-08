@@ -1,8 +1,66 @@
-import { Quiz, QuizFormData, QuizQuestion } from "@/types/quiz";
 
-// This would normally call an API or use AI to generate questions
-// For demo purposes, we're using mock data with a delay to simulate API call
+import { Quiz, QuizFormData, QuizQuestion } from "@/types/quiz";
+import { callGeminiApi } from "./geminiApi";
+
+// This variable will store the API key from environment or user input
+let geminiApiKey: string | null = null;
+
+export function setGeminiApiKey(key: string) {
+  geminiApiKey = key;
+}
+
+export function getGeminiApiKey(): string | null {
+  return geminiApiKey;
+}
+
 export async function generateQuiz(formData: QuizFormData): Promise<Quiz> {
+  // Check if we have an API key
+  if (!geminiApiKey) {
+    // If no API key, use the mock data generator
+    return generateMockQuiz(formData);
+  }
+  
+  try {
+    // Call the Gemini API with the form data
+    const apiResponse = await callGeminiApi(
+      {
+        topic: formData.topic,
+        subject: formData.subject,
+        grade: formData.grade,
+        numberOfQuestions: formData.numberOfQuestions,
+        difficulty: formData.difficulty
+      },
+      geminiApiKey
+    );
+    
+    // Map the API response to our Quiz structure
+    const questions: QuizQuestion[] = apiResponse.questions.map((q, index) => ({
+      id: `q-${index}`,
+      question: q.question,
+      type: q.type,
+      options: q.options.map((opt, optIndex) => ({
+        id: `q-${index}-${optIndex}`,
+        text: opt.text,
+        isCorrect: opt.isCorrect
+      })),
+      explanation: q.explanation
+    }));
+    
+    return {
+      id: `quiz-${Date.now()}`,
+      title: `${formData.topic} Quiz - ${formData.grade} Grade ${formData.subject}`,
+      questions,
+      createdAt: new Date()
+    };
+  } catch (error) {
+    console.error("Error generating quiz with Gemini:", error);
+    // Fallback to mock data if the API call fails
+    return generateMockQuiz(formData);
+  }
+}
+
+// Renamed the original function to generateMockQuiz as a fallback
+async function generateMockQuiz(formData: QuizFormData): Promise<Quiz> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 1500));
   

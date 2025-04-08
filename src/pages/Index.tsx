@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import QuizForm from '@/components/QuizForm';
 import QuizDisplay from '@/components/QuizDisplay';
 import { Quiz, QuizFormData } from '@/types/quiz';
-import { generateQuiz } from '@/lib/quizGenerator';
+import { generateQuiz, getGeminiApiKey } from '@/lib/quizGenerator';
 import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
@@ -20,9 +20,12 @@ const Index = () => {
     try {
       const generatedQuiz = await generateQuiz(formData);
       setQuiz(generatedQuiz);
+      
+      const usingAI = !!getGeminiApiKey();
+      
       toast({
         title: "Quiz Generated!",
-        description: `Successfully created a ${formData.difficulty} quiz with ${formData.numberOfQuestions} questions.`,
+        description: `Successfully created a ${formData.difficulty} quiz with ${formData.numberOfQuestions} questions ${usingAI ? 'using Gemini AI' : ''}.`,
       });
     } catch (error) {
       toast({
@@ -52,6 +55,12 @@ const Index = () => {
               <p className="text-muted-foreground">
                 Create customized quizzes for your students in seconds
               </p>
+              {!getGeminiApiKey() && (
+                <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md text-amber-700 text-sm">
+                  💡 For better quality quizzes, set your Gemini API key in the top-right corner. 
+                  Currently using mock data.
+                </div>
+              )}
             </div>
             <QuizForm onSubmit={handleQuizFormSubmit} isLoading={isLoading} />
           </div>

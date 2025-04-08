@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { regenerateQuestion } from '@/lib/quizGenerator';
 import QuizQuestion from './QuizQuestion';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { getGeminiApiKey } from '@/lib/quizGenerator';
+import { useToast } from '@/components/ui/use-toast';
 
 interface QuizDisplayProps {
   quiz: Quiz;
@@ -20,10 +22,28 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
   onUpdateQuiz
 }) => {
   const [showAnswers, setShowAnswers] = useState(false);
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+  const { toast } = useToast();
 
-  const handleRegenerateQuestion = (index: number) => {
-    const updatedQuiz = regenerateQuestion(quiz, index, formData);
-    onUpdateQuiz(updatedQuiz);
+  const handleRegenerateQuestion = async (index: number) => {
+    try {
+      setRegeneratingIndex(index);
+      const updatedQuiz = regenerateQuestion(quiz, index, formData);
+      onUpdateQuiz(updatedQuiz);
+      toast({
+        title: "Question Regenerated",
+        description: "A new question has been created.",
+      });
+    } catch (error) {
+      console.error("Error regenerating question:", error);
+      toast({
+        title: "Error",
+        description: "Failed to regenerate question. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setRegeneratingIndex(null);
+    }
   };
 
   // Function to create a printable version
@@ -95,6 +115,8 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
     }
   };
 
+  const isUsingAI = !!getGeminiApiKey();
+
   return (
     <div className="quiz-container">
       <Card className="mb-6">
@@ -102,8 +124,9 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
           <CardTitle className="text-xl">{quiz.title}</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="text-sm text-muted-foreground">
-            {quiz.questions.length} questions • {formData.difficulty} difficulty
+          <div className="text-sm text-muted-foreground flex justify-between">
+            <span>{quiz.questions.length} questions • {formData.difficulty} difficulty</span>
+            {isUsingAI && <span className="text-quiz-primary font-medium">Powered by Gemini AI</span>}
           </div>
         </CardContent>
         <CardFooter className="flex justify-between gap-4 flex-wrap">
@@ -139,6 +162,7 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
             index={index}
             showAnswers={showAnswers}
             onRegenerateQuestion={() => handleRegenerateQuestion(index)}
+            isRegenerating={regeneratingIndex === index}
           />
         ))}
       </div>

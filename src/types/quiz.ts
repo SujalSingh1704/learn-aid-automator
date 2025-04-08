@@ -27,3 +27,24 @@ export interface Quiz {
   questions: QuizQuestion[];
   createdAt: Date;
 }
+
+// Gemini API types
+export interface GeminiQuizRequest {
+  topic: string;
+  subject: string;
+  grade: string;
+  numberOfQuestions: number;
+  difficulty: string;
+}
+
+export interface GeminiQuizResponse {
+  questions: {
+    question: string;
+    type: 'multiple-choice' | 'true-false';
+    options: {
+      text: string;
+      isCorrect: boolean;
+    }[];
+    explanation?: string;
+  }[];
+}
