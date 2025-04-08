@@ -1,4 +1,3 @@
-
 import { Quiz, QuizFormData, QuizQuestion } from "@/types/quiz";
 import { callGeminiApi } from "./geminiApi";
 
@@ -131,23 +130,4 @@ function generateTrueFalseQuestion(formData: QuizFormData, index: number): QuizQ
     ],
     explanation: `This statement about ${formData.topic} is ${index % 2 === 0 ? 'true' : 'false'} because of specific principles in ${formData.subject}.`
   };
-}
-
-export function regenerateQuestion(quiz: Quiz, questionIndex: number, formData: QuizFormData): Quiz {
-  const newQuiz = { ...quiz };
-  const currentType = quiz.questions[questionIndex].type;
-  
-  // Generate a new question of the same type
-  const newQuestion = currentType === 'multiple-choice' 
-    ? generateMultipleChoiceQuestion(formData, questionIndex + 100) // Adding 100 to get different template
-    : generateTrueFalseQuestion(formData, questionIndex + 100);
-  
-  // Replace the question
-  newQuiz.questions = [
-    ...quiz.questions.slice(0, questionIndex),
-    newQuestion,
-    ...quiz.questions.slice(questionIndex + 1)
-  ];
-  
-  return newQuiz;
 }

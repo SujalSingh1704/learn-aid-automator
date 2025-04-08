@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, QuizFormData } from '@/types/quiz';
 import { Button } from '@/components/ui/button';
@@ -17,47 +16,10 @@ interface QuizDisplayProps {
 const QuizDisplay: React.FC<QuizDisplayProps> = ({
   quiz,
   onNewQuiz,
-  formData,
-  onUpdateQuiz
+  formData
 }) => {
   const [showAnswers, setShowAnswers] = useState(false);
-  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
   const { toast } = useToast();
-
-  const handleRegenerateQuestion = async (index: number) => {
-    try {
-      setRegeneratingIndex(index);
-      
-      // This will be handled by the parent component now
-      const updatedQuiz = await fetch('/api/regenerate-question', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          quizId: quiz.id,
-          questionIndex: index,
-          formData
-        })
-      }).then(res => res.json());
-      
-      onUpdateQuiz(updatedQuiz);
-      
-      toast({
-        title: "Question Regenerated",
-        description: "A new question has been created.",
-      });
-    } catch (error) {
-      console.error("Error regenerating question:", error);
-      toast({
-        title: "Error",
-        description: "Failed to regenerate question. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setRegeneratingIndex(null);
-    }
-  };
 
   // Function to create a printable version
   const handlePrintQuiz = () => {
@@ -174,8 +136,6 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
             question={question}
             index={index}
             showAnswers={showAnswers}
-            onRegenerateQuestion={() => handleRegenerateQuestion(index)}
-            isRegenerating={regeneratingIndex === index}
           />
         ))}
       </div>

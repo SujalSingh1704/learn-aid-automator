@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import QuizForm from '@/components/QuizForm';
 import QuizDisplay from '@/components/QuizDisplay';
 import { Quiz, QuizFormData } from '@/types/quiz';
-import { generateQuiz, regenerateQuestion } from '@/lib/quizGenerator';
+import { generateQuiz } from '@/lib/quizGenerator';
 import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
@@ -39,40 +38,6 @@ const Index = () => {
 
   const handleNewQuiz = () => {
     setQuiz(null);
-  };
-
-  const handleRegenerateQuestion = async (quiz: Quiz, questionIndex: number) => {
-    if (!currentFormData) return;
-    
-    try {
-      // Generate a completely new quiz instead of using the mock generator
-      const newQuiz = await generateQuiz(currentFormData);
-      
-      // Take just one question from the new quiz
-      const newQuestion = newQuiz.questions[0];
-      
-      // Update the existing quiz with this new question
-      const updatedQuiz = { ...quiz };
-      updatedQuiz.questions = [
-        ...quiz.questions.slice(0, questionIndex),
-        newQuestion,
-        ...quiz.questions.slice(questionIndex + 1)
-      ];
-      
-      setQuiz(updatedQuiz);
-      
-      toast({
-        title: "Question Regenerated",
-        description: "Successfully created a new question using Gemini AI.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error Regenerating Question",
-        description: error.message || "Failed to regenerate question. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Error regenerating question:", error);
-    }
   };
 
   return (

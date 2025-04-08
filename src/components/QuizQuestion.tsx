@@ -1,26 +1,21 @@
-
 import React from 'react';
 import { QuizQuestion as QuizQuestionType } from '@/types/quiz';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Check, X, BookOpen, RefreshCw } from 'lucide-react';
+import { Check, X, BookOpen } from 'lucide-react';
 
 interface QuizQuestionProps {
   question: QuizQuestionType;
   index: number;
   showAnswers: boolean;
-  onRegenerateQuestion: () => void;
-  isRegenerating?: boolean; // Added the missing prop
 }
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({
   question,
   index,
-  showAnswers,
-  onRegenerateQuestion,
-  isRegenerating = false // Default to false if not provided
+  showAnswers
 }) => {
   const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
   const [showExplanation, setShowExplanation] = React.useState(false);
@@ -29,11 +24,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     if (!showAnswers) {
       setSelectedOption(optionId);
     }
-  };
-
-  const isCorrect = (optionId: string) => {
-    const option = question.options.find(opt => opt.id === optionId);
-    return option?.isCorrect;
   };
 
   return (
@@ -100,27 +90,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           </div>
         )}
       </CardContent>
-      <CardFooter>
-        <Button 
-          variant="ghost"
-          size="sm"
-          onClick={onRegenerateQuestion}
-          disabled={isRegenerating}
-          className="text-xs flex items-center gap-1"
-        >
-          {isRegenerating ? (
-            <>
-              <RefreshCw className="h-3 w-3 animate-spin" />
-              Regenerating...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-3 w-3" />
-              Regenerate Question
-            </>
-          )}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
