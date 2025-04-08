@@ -1,3 +1,4 @@
+
 import { Quiz, QuizFormData, QuizQuestion } from "@/types/quiz";
 import { callGeminiApi } from "./geminiApi";
 
@@ -47,8 +48,7 @@ export async function generateQuiz(formData: QuizFormData): Promise<Quiz> {
     };
   } catch (error) {
     console.error("Error generating quiz with Gemini:", error);
-    // Fallback to mock data if the API call fails
-    return generateMockQuiz(formData);
+    throw error; // Re-throw the error instead of falling back to mock data
   }
 }
 

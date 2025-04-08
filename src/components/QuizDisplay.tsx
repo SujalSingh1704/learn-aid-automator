@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Quiz, QuizFormData } from '@/types/quiz';
 import { Button } from '@/components/ui/button';
-import { regenerateQuestion } from '@/lib/quizGenerator';
 import QuizQuestion from './QuizQuestion';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getGeminiApiKey } from '@/lib/quizGenerator';
@@ -28,8 +27,22 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
   const handleRegenerateQuestion = async (index: number) => {
     try {
       setRegeneratingIndex(index);
-      const updatedQuiz = regenerateQuestion(quiz, index, formData);
+      
+      // This will be handled by the parent component now
+      const updatedQuiz = await fetch('/api/regenerate-question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          quizId: quiz.id,
+          questionIndex: index,
+          formData
+        })
+      }).then(res => res.json());
+      
       onUpdateQuiz(updatedQuiz);
+      
       toast({
         title: "Question Regenerated",
         description: "A new question has been created.",
