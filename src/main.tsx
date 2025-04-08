@@ -1,4 +1,6 @@
 
+// This file is kept for compatibility with the current setup
+// Future development should use the Next.js pages structure
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
