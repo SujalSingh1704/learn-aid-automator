@@ -1,7 +1,7 @@
 
 import { GeminiQuizRequest, GeminiQuizResponse } from "@/types/quiz";
 
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
 
 export async function callGeminiApi(
   data: GeminiQuizRequest,
