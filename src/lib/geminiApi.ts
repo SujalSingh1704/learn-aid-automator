@@ -1,7 +1,6 @@
-
 import { GeminiQuizRequest, GeminiQuizResponse } from "@/types/quiz";
 
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent";
 
 export async function callGeminiApi(
   data: GeminiQuizRequest,
@@ -69,6 +68,12 @@ function createQuizPrompt(data: GeminiQuizRequest): string {
 Generate a ${data.difficulty} level educational quiz for ${data.grade} grade students on the topic of "${data.topic}" in the subject of "${data.subject}". 
 Please create ${data.numberOfQuestions} questions total, with a mix of multiple-choice (with exactly 4 options each) and true/false questions.
 
+Important requirements for the questions:
+- For multiple-choice questions, ensure all 4 options are realistic and contextually relevant to the question
+- Options should be distinct from each other and represent common understanding or misconceptions about the topic
+- Avoid obviously incorrect or unrelated options
+- Make answer choices clear and unambiguous
+
 Return the response as a JSON object with the following structure:
 {
   "questions": [
@@ -76,12 +81,12 @@ Return the response as a JSON object with the following structure:
       "question": "Question text goes here?",
       "type": "multiple-choice",
       "options": [
-        { "text": "Option A", "isCorrect": false },
-        { "text": "Option B", "isCorrect": false },
-        { "text": "Option C", "isCorrect": true },
-        { "text": "Option D", "isCorrect": false }
+        { "text": "First plausible answer related to the topic", "isCorrect": false },
+        { "text": "Second plausible answer related to the topic", "isCorrect": false },
+        { "text": "Correct answer", "isCorrect": true },
+        { "text": "Fourth plausible answer related to the topic", "isCorrect": false }
       ],
-      "explanation": "Explanation of the correct answer for learning purposes"
+      "explanation": "Detailed explanation of why the correct answer is right and why other options are incorrect"
     },
     {
       "question": "True/False question text goes here?",
@@ -90,11 +95,11 @@ Return the response as a JSON object with the following structure:
         { "text": "True", "isCorrect": true },
         { "text": "False", "isCorrect": false }
       ],
-      "explanation": "Explanation of why the statement is true or false"
+      "explanation": "Explanation of why the statement is true or false, with specific context"
     }
   ]
 }
 
-Make sure each question is age-appropriate for ${data.grade} grade, accurate, educational, and aligned with typical ${data.subject} curriculum. Each question must have exactly one correct answer.
+Make sure each question is age-appropriate for ${data.grade} grade, accurate, educational, and aligned with typical ${data.subject} curriculum. Each question must have exactly one correct answer, and all options should be properly contextualized within the topic "${data.topic}".
 `;
 }
