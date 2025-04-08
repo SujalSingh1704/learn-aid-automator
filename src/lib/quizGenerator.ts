@@ -1,9 +1,8 @@
-
 import { Quiz, QuizFormData, QuizQuestion } from "@/types/quiz";
 import { callGeminiApi } from "./geminiApi";
 
-// This variable will store the API key from environment or user input
-let geminiApiKey: string | null = null;
+// This variable will store the API key
+let geminiApiKey: string | null = "AIzaSyAqEqaiQwDXpIxvyI8hbZo8jw9S4i7S-YU";
 
 export function setGeminiApiKey(key: string) {
   geminiApiKey = key;
@@ -14,14 +13,8 @@ export function getGeminiApiKey(): string | null {
 }
 
 export async function generateQuiz(formData: QuizFormData): Promise<Quiz> {
-  // Check if we have an API key
-  if (!geminiApiKey) {
-    // If no API key, use the mock data generator
-    return generateMockQuiz(formData);
-  }
-  
   try {
-    // Call the Gemini API with the form data
+    // Call the Gemini API with the form data using the stored API key
     const apiResponse = await callGeminiApi(
       {
         topic: formData.topic,
@@ -30,7 +23,7 @@ export async function generateQuiz(formData: QuizFormData): Promise<Quiz> {
         numberOfQuestions: formData.numberOfQuestions,
         difficulty: formData.difficulty
       },
-      geminiApiKey
+      geminiApiKey!
     );
     
     // Map the API response to our Quiz structure
@@ -59,7 +52,7 @@ export async function generateQuiz(formData: QuizFormData): Promise<Quiz> {
   }
 }
 
-// Renamed the original function to generateMockQuiz as a fallback
+// Fallback mock quiz generator
 async function generateMockQuiz(formData: QuizFormData): Promise<Quiz> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 1500));
