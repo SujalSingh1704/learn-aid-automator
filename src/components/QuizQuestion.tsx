@@ -5,20 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Check, X, BookOpen } from 'lucide-react';
+import { Check, X, BookOpen, RefreshCw } from 'lucide-react';
 
 interface QuizQuestionProps {
   question: QuizQuestionType;
   index: number;
   showAnswers: boolean;
   onRegenerateQuestion: () => void;
+  isRegenerating?: boolean; // Added the missing prop
 }
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({
   question,
   index,
   showAnswers,
-  onRegenerateQuestion
+  onRegenerateQuestion,
+  isRegenerating = false // Default to false if not provided
 }) => {
   const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
   const [showExplanation, setShowExplanation] = React.useState(false);
@@ -103,9 +105,20 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           variant="ghost"
           size="sm"
           onClick={onRegenerateQuestion}
-          className="text-xs"
+          disabled={isRegenerating}
+          className="text-xs flex items-center gap-1"
         >
-          Regenerate Question
+          {isRegenerating ? (
+            <>
+              <RefreshCw className="h-3 w-3 animate-spin" />
+              Regenerating...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="h-3 w-3" />
+              Regenerate Question
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>
