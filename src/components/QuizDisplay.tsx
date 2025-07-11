@@ -53,30 +53,52 @@ const QuizDisplay: React.FC<QuizDisplayProps> = ({
           <div class="question">
             <h3>Question ${index + 1}</h3>
             <p>${question.question}</p>
-            <div class="options">
         `;
-
-        question.options.forEach((option, oIndex) => {
-          const letter = String.fromCharCode(65 + oIndex); // A, B, C, D...
-          printContent += `<div class="option">${letter}. ${option.text}</div>`;
-        });
-
-        printContent += `</div></div>`;
+        if (question.type === 'multiple-choice' || question.type === 'true-false') {
+          printContent += `<div class="options">`;
+          question.options.forEach((option, oIndex) => {
+            const letter = String.fromCharCode(65 + oIndex); // A, B, C, D...
+            printContent += `<div class="option">${letter}. ${option.text}</div>`;
+          });
+          printContent += `</div>`;
+        } else if (question.type === 'long-answer') {
+          printContent += `<div class="long-answer">`;
+          if (question.rubric) {
+            printContent += `<div><strong>Rubric:</strong><ul>${question.rubric.map((r: string) => `<li>${r}</li>`).join('')}</ul></div>`;
+          }
+          if (question.keyPoints) {
+            printContent += `<div><strong>Key Points:</strong><ul>${question.keyPoints.map((k: string) => `<li>${k}</li>`).join('')}</ul></div>`;
+          }
+          printContent += `</div>`;
+        }
+        printContent += `</div>`;
       });
 
       // Add answer key
       printContent += `<div class="answers"><h2>Answer Key</h2>`;
       quiz.questions.forEach((question, index) => {
-        const correctOption = question.options.find(opt => opt.isCorrect);
-        const correctIndex = question.options.findIndex(opt => opt.isCorrect);
-        const letter = String.fromCharCode(65 + correctIndex);
-        
-        printContent += `
-          <div class="answer">
-            <p><strong>Question ${index + 1}:</strong> ${letter}. ${correctOption?.text}</p>
-            ${question.explanation ? `<p><em>Explanation: ${question.explanation}</em></p>` : ''}
-          </div>
-        `;
+        printContent += `<div class="answer">`;
+        if (question.type === 'multiple-choice' || question.type === 'true-false') {
+          const correctOption = question.options.find(opt => opt.isCorrect);
+          const correctIndex = question.options.findIndex(opt => opt.isCorrect);
+          const letter = String.fromCharCode(65 + correctIndex);
+          printContent += `<p><strong>Question ${index + 1}:</strong> ${letter}. ${correctOption?.text}</p>`;
+          if (question.explanation) {
+            printContent += `<p><em>Explanation: ${question.explanation}</em></p>`;
+          }
+        } else if (question.type === 'long-answer') {
+          printContent += `<p><strong>Question ${index + 1}:</strong> Long Answer</p>`;
+          if (question.sampleAnswer) {
+            printContent += `<p><em>Sample Answer: ${question.sampleAnswer}</em></p>`;
+          }
+          if (question.rubric) {
+            printContent += `<div><strong>Rubric:</strong><ul>${question.rubric.map((r: string) => `<li>${r}</li>`).join('')}</ul></div>`;
+          }
+          if (question.keyPoints) {
+            printContent += `<div><strong>Key Points:</strong><ul>${question.keyPoints.map((k: string) => `<li>${k}</li>`).join('')}</ul></div>`;
+          }
+        }
+        printContent += `</div>`;
       });
 
       printContent += `</div></body></html>`;
